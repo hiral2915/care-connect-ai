@@ -15,6 +15,7 @@ import { Route as DonateRouteImport } from './routes/donate'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as DentalRouteImport } from './routes/dental'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AiPrioritizationRouteImport } from './routes/ai-prioritization'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -48,6 +49,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AiPrioritizationRoute = AiPrioritizationRouteImport.update({
+  id: '/ai-prioritization',
+  path: '/ai-prioritization',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -62,6 +68,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/ai-prioritization': typeof AiPrioritizationRoute
   '/contact': typeof ContactRoute
   '/dental': typeof DentalRoute
   '/doctors': typeof DoctorsRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/ai-prioritization': typeof AiPrioritizationRoute
   '/contact': typeof ContactRoute
   '/dental': typeof DentalRoute
   '/doctors': typeof DoctorsRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/ai-prioritization': typeof AiPrioritizationRoute
   '/contact': typeof ContactRoute
   '/dental': typeof DentalRoute
   '/doctors': typeof DoctorsRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/ai-prioritization'
     | '/contact'
     | '/dental'
     | '/doctors'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/ai-prioritization'
     | '/contact'
     | '/dental'
     | '/doctors'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/ai-prioritization'
     | '/contact'
     | '/dental'
     | '/doctors'
@@ -126,6 +138,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AiPrioritizationRoute: typeof AiPrioritizationRoute
   ContactRoute: typeof ContactRoute
   DentalRoute: typeof DentalRoute
   DoctorsRoute: typeof DoctorsRoute
@@ -178,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ai-prioritization': {
+      id: '/ai-prioritization'
+      path: '/ai-prioritization'
+      fullPath: '/ai-prioritization'
+      preLoaderRoute: typeof AiPrioritizationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -198,6 +218,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AiPrioritizationRoute: AiPrioritizationRoute,
   ContactRoute: ContactRoute,
   DentalRoute: DentalRoute,
   DoctorsRoute: DoctorsRoute,
