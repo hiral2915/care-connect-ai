@@ -9,8 +9,56 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PhysioRouteImport } from './routes/physio'
+import { Route as NgoRouteImport } from './routes/ngo'
+import { Route as DonateRouteImport } from './routes/donate'
+import { Route as DoctorsRouteImport } from './routes/doctors'
+import { Route as DentalRouteImport } from './routes/dental'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AiPrioritizationRouteImport } from './routes/ai-prioritization'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PhysioRoute = PhysioRouteImport.update({
+  id: '/physio',
+  path: '/physio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NgoRoute = NgoRouteImport.update({
+  id: '/ngo',
+  path: '/ngo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DonateRoute = DonateRouteImport.update({
+  id: '/donate',
+  path: '/donate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoctorsRoute = DoctorsRouteImport.update({
+  id: '/doctors',
+  path: '/doctors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DentalRoute = DentalRouteImport.update({
+  id: '/dental',
+  path: '/dental',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiPrioritizationRoute = AiPrioritizationRouteImport.update({
+  id: '/ai-prioritization',
+  path: '/ai-prioritization',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +67,144 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/ai-prioritization': typeof AiPrioritizationRoute
+  '/contact': typeof ContactRoute
+  '/dental': typeof DentalRoute
+  '/doctors': typeof DoctorsRoute
+  '/donate': typeof DonateRoute
+  '/ngo': typeof NgoRoute
+  '/physio': typeof PhysioRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/ai-prioritization': typeof AiPrioritizationRoute
+  '/contact': typeof ContactRoute
+  '/dental': typeof DentalRoute
+  '/doctors': typeof DoctorsRoute
+  '/donate': typeof DonateRoute
+  '/ngo': typeof NgoRoute
+  '/physio': typeof PhysioRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/ai-prioritization': typeof AiPrioritizationRoute
+  '/contact': typeof ContactRoute
+  '/dental': typeof DentalRoute
+  '/doctors': typeof DoctorsRoute
+  '/donate': typeof DonateRoute
+  '/ngo': typeof NgoRoute
+  '/physio': typeof PhysioRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/ai-prioritization'
+    | '/contact'
+    | '/dental'
+    | '/doctors'
+    | '/donate'
+    | '/ngo'
+    | '/physio'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/ai-prioritization'
+    | '/contact'
+    | '/dental'
+    | '/doctors'
+    | '/donate'
+    | '/ngo'
+    | '/physio'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/ai-prioritization'
+    | '/contact'
+    | '/dental'
+    | '/doctors'
+    | '/donate'
+    | '/ngo'
+    | '/physio'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AiPrioritizationRoute: typeof AiPrioritizationRoute
+  ContactRoute: typeof ContactRoute
+  DentalRoute: typeof DentalRoute
+  DoctorsRoute: typeof DoctorsRoute
+  DonateRoute: typeof DonateRoute
+  NgoRoute: typeof NgoRoute
+  PhysioRoute: typeof PhysioRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/physio': {
+      id: '/physio'
+      path: '/physio'
+      fullPath: '/physio'
+      preLoaderRoute: typeof PhysioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ngo': {
+      id: '/ngo'
+      path: '/ngo'
+      fullPath: '/ngo'
+      preLoaderRoute: typeof NgoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/donate': {
+      id: '/donate'
+      path: '/donate'
+      fullPath: '/donate'
+      preLoaderRoute: typeof DonateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/doctors': {
+      id: '/doctors'
+      path: '/doctors'
+      fullPath: '/doctors'
+      preLoaderRoute: typeof DoctorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dental': {
+      id: '/dental'
+      path: '/dental'
+      fullPath: '/dental'
+      preLoaderRoute: typeof DentalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-prioritization': {
+      id: '/ai-prioritization'
+      path: '/ai-prioritization'
+      fullPath: '/ai-prioritization'
+      preLoaderRoute: typeof AiPrioritizationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +217,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AiPrioritizationRoute: AiPrioritizationRoute,
+  ContactRoute: ContactRoute,
+  DentalRoute: DentalRoute,
+  DoctorsRoute: DoctorsRoute,
+  DonateRoute: DonateRoute,
+  NgoRoute: NgoRoute,
+  PhysioRoute: PhysioRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
