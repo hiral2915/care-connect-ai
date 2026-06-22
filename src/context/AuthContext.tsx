@@ -1,10 +1,8 @@
 /**
- * CareConnect AI — Auth Context
+ * CareConnect AI — Auth Context (Lovable Cloud / Supabase)
  *
- * Place this file at: src/context/AuthContext.tsx
- *
- * Wraps the app in <AuthProvider> in src/routes/__root.tsx (see instructions).
- * Provides useAuth() hook everywhere.
+ * Wraps the app with auth + role state pulled from Supabase Auth and the
+ * `user_roles` table. Exposes a hasRole() helper.
  */
 
 import {
@@ -13,124 +11,141 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   type ReactNode,
 } from "react";
-import {
-  authApi,
-  getToken,
-  getUser,
-  setToken,
-  setUser,
-  removeToken,
-  removeUser,
-  type User,
-} from "@/lib/api";
+import type { Session, User as SupaUser } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+
+export type AppRole = "admin" | "doctor" | "patient";
+
+export interface Profile {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+  avatar_url: string | null;
+}
 
 interface AuthContextValue {
-  user: User | null;
-  token: string | null;
+  user: SupaUser | null;
+  session: Session | null;
+  profile: Profile | null;
+  roles: AppRole[];
+  primaryRole: AppRole | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  hasRole: (role: AppRole) => boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (data: {
-    name: string;
-    email: string;
-    password: string;
-    phone?: string;
-  }) => Promise<void>;
-  logout: () => void;
-  refreshUser: () => Promise<void>;
+  register: (data: { full_name: string; email: string; password: string; phone?: string }) => Promise<void>;
+  logout: () => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // const [user, setUserState] = useState<User | null>(getUser);
-  // const [token, setTokenState] = useState<string | null>(getToken);
-  const [user, setUserState] = useState<User | null>(null);
-  const [token, setTokenState] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<SupaUser | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [roles, setRoles] = useState<AppRole[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Verify token on mount (in case it expired)
-  // useEffect(() => {
-  //   const storedToken = getToken();
-  //   if (!storedToken) return;
-  //   authApi
-  //     .me()
-  //     .then(({ user: u }) => {
-  //       setUserState(u);
-  //       setUser(u);
-  //     })
-  //     .catch(() => {
-  //       removeToken();
-  //       removeUser();
-  //       setUserState(null);
-  //       setTokenState(null);
-  //     });
-  // }, []);
+  const loadUserExtras = useCallback(async (uid: string) => {
+    const [{ data: prof }, { data: rolesRows }] = await Promise.all([
+      supabase.from("profiles").select("*").eq("id", uid).maybeSingle(),
+      supabase.from("user_roles").select("role").eq("user_id", uid),
+    ]);
+    setProfile((prof as Profile | null) ?? null);
+    setRoles(((rolesRows ?? []) as { role: AppRole }[]).map((r) => r.role));
+  }, []);
+
   useEffect(() => {
-  setUserState(getUser());
-  setTokenState(getToken());
-}, []);
+    // Hydrate
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setUser(data.session?.user ?? null);
+      if (data.session?.user) {
+        loadUserExtras(data.session.user.id).finally(() => setIsLoading(false));
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, sess) => {
+      setSession(sess);
+      setUser(sess?.user ?? null);
+      if (event === "SIGNED_OUT" || !sess) {
+        setProfile(null);
+        setRoles([]);
+        return;
+      }
+      // Defer DB calls to avoid deadlocks inside the listener
+      setTimeout(() => {
+        if (sess.user) loadUserExtras(sess.user.id);
+      }, 0);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [loadUserExtras]);
 
   const login = useCallback(async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      const { token: t, user: u } = await authApi.login(email, password);
-      setToken(t);
-      setUser(u);
-      setTokenState(t);
-      setUserState(u);
-    } finally {
-      setIsLoading(false);
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
   }, []);
 
   const register = useCallback(
-    async (data: { name: string; email: string; password: string; phone?: string }) => {
-      setIsLoading(true);
-      try {
-        const { token: t, user: u } = await authApi.register(data);
-        setToken(t);
-        setUser(u);
-        setTokenState(t);
-        setUserState(u);
-      } finally {
-        setIsLoading(false);
-      }
+    async (data: { full_name: string; email: string; password: string; phone?: string }) => {
+      const redirectUrl = typeof window !== "undefined" ? `${window.location.origin}/dashboard` : undefined;
+      const { error } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: { full_name: data.full_name, phone: data.phone ?? null },
+        },
+      });
+      if (error) throw error;
     },
     []
   );
 
-  const logout = useCallback(() => {
-    removeToken();
-    removeUser();
-    setTokenState(null);
-    setUserState(null);
+  const logout = useCallback(async () => {
+    await supabase.auth.signOut();
+    setSession(null);
+    setUser(null);
+    setProfile(null);
+    setRoles([]);
   }, []);
 
-  const refreshUser = useCallback(async () => {
-    const { user: u } = await authApi.me();
-    setUser(u);
-    setUserState(u);
-  }, []);
+  const refresh = useCallback(async () => {
+    if (user) await loadUserExtras(user.id);
+  }, [user, loadUserExtras]);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        isLoading,
-        isAuthenticated: !!token && !!user,
-        login,
-        register,
-        logout,
-        refreshUser,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const hasRole = useCallback((r: AppRole) => roles.includes(r), [roles]);
+
+  const primaryRole = useMemo<AppRole | null>(() => {
+    if (roles.includes("admin")) return "admin";
+    if (roles.includes("doctor")) return "doctor";
+    if (roles.includes("patient")) return "patient";
+    return null;
+  }, [roles]);
+
+  const value: AuthContextValue = {
+    user,
+    session,
+    profile,
+    roles,
+    primaryRole,
+    isLoading,
+    isAuthenticated: !!user,
+    hasRole,
+    login,
+    register,
+    logout,
+    refresh,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthContextValue {

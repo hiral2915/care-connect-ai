@@ -1,119 +1,107 @@
-/**
- * CareConnect AI — Register Page
- *
- * Place this file at: src/routes/register.tsx
- * Route: /register
- */
-
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { useAuth } from "@/context/AuthContext";
-import { HeartHandshake } from "lucide-react";
+import { HeartHandshake, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/register")({
   component: RegisterPage,
 });
 
 function RegisterPage() {
-  const { register, isLoading } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "", email: "", password: "", confirmPassword: "", phone: "",
-  });
+  const [form, setForm] = useState({ full_name: "", email: "", phone: "", password: "" });
   const [error, setError] = useState("");
-
-  function set(field: keyof typeof form) {
-    return (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm((f) => ({ ...f, [field]: e.target.value }));
-  }
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-    if (form.password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
+    setLoading(true);
     try {
-      await register({
-        name: form.name,
-        email: form.email,
-        password: form.password,
-        phone: form.phone || undefined,
-      });
-      navigate({ to: "/" });
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Registration failed");
+      await register(form);
+      setDone(true);
+      setTimeout(() => navigate({ to: "/dashboard" }), 800);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Sign up failed");
+    } finally {
+      setLoading(false);
     }
+  }
+
+  if (done) {
+    return (
+      <SiteLayout>
+        <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-4 text-center">
+          <h2 className="font-display text-2xl font-bold">Welcome to CareConnect!</h2>
+          <p className="mt-2 text-muted-foreground">
+            Your account is ready. Redirecting to your dashboard…
+          </p>
+        </div>
+      </SiteLayout>
+    );
   }
 
   return (
     <SiteLayout>
-      <div className="flex min-h-[70vh] items-center justify-center px-4 py-16">
-        <div className="w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-card">
-          <div className="mb-8 flex flex-col items-center gap-2 text-center">
-            <span className="grid h-12 w-12 place-items-center rounded-2xl gradient-brand text-primary-foreground shadow-elegant">
-              <HeartHandshake className="h-6 w-6" />
-            </span>
-            <h1 className="font-display text-2xl font-bold">Create your account</h1>
-            <p className="text-sm text-muted-foreground">
-              Join CareConnect — free for patients
-            </p>
-          </div>
-
-          {error && (
-            <div className="mb-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {[
-              { label: "Full name", field: "name" as const, type: "text", placeholder: "Dr. Priya Sharma" },
-              { label: "Email", field: "email" as const, type: "email", placeholder: "you@example.com" },
-              { label: "Phone (optional)", field: "phone" as const, type: "tel", placeholder: "+91 98765 43210" },
-              { label: "Password", field: "password" as const, type: "password", placeholder: "Min. 6 characters" },
-              { label: "Confirm password", field: "confirmPassword" as const, type: "password", placeholder: "Re-enter password" },
-            ].map(({ label, field, type, placeholder }) => (
-              <div key={field}>
-                <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {label}
-                </label>
-                <input
-                  type={type}
-                  required={field !== "phone"}
-                  value={form[field]}
-                  onChange={set(field)}
-                  placeholder={placeholder}
-                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none ring-primary/40 transition focus:border-primary focus:ring-2"
-                />
-              </div>
-            ))}
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full rounded-xl gradient-brand py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:opacity-90 disabled:opacity-60"
-            >
-              {isLoading ? "Creating account…" : "Create account"}
-            </button>
-          </form>
-
-          <p className="mt-6 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link to="/login" className="font-semibold text-primary-strong hover:underline">
-              Sign in
-            </Link>
-          </p>
+      <div className="mx-auto flex min-h-[70vh] max-w-md flex-col justify-center px-4 py-12">
+        <div className="mb-6 flex items-center gap-2">
+          <span className="grid h-10 w-10 place-items-center rounded-xl gradient-brand text-primary-foreground shadow-elegant">
+            <HeartHandshake className="h-5 w-5" />
+          </span>
+          <span className="font-display text-xl font-bold">Create your account</span>
         </div>
+        <h1 className="font-display text-2xl font-bold">Join CareConnect</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Already registered?{" "}
+          <Link to="/login" className="font-semibold text-primary-strong hover:underline">
+            Sign in
+          </Link>
+        </p>
+
+        {error && (
+          <div className="mt-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {[
+            { k: "full_name", label: "Full name", type: "text", required: true },
+            { k: "email", label: "Email", type: "email", required: true },
+            { k: "phone", label: "Phone (optional)", type: "tel", required: false },
+            { k: "password", label: "Password (min 6 chars)", type: "password", required: true },
+          ].map((f) => (
+            <div key={f.k}>
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {f.label}
+              </label>
+              <input
+                type={f.type}
+                required={f.required}
+                minLength={f.k === "password" ? 6 : undefined}
+                value={(form as Record<string, string>)[f.k]}
+                onChange={(e) => setForm((s) => ({ ...s, [f.k]: e.target.value }))}
+                className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+          ))}
+          <button
+            type="submit"
+            disabled={loading}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl gradient-brand py-3 text-sm font-semibold text-primary-foreground shadow-elegant hover:opacity-90 disabled:opacity-60"
+          >
+            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {loading ? "Creating account…" : "Create account"}
+          </button>
+          <p className="text-xs text-muted-foreground">
+            By signing up you agree to our terms. New accounts default to the Patient role —
+            doctors and admins are assigned by clinic administrators.
+          </p>
+        </form>
       </div>
     </SiteLayout>
   );

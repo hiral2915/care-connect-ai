@@ -1,19 +1,6 @@
-/**
- * CareConnect AI — Navbar (Auth-aware version)
- *
- * This REPLACES src/components/site/Navbar.tsx
- *
- * WHAT CHANGED vs original:
- *   - Added import of useAuth
- *   - Added Login/Register links when not authenticated
- *   - Added user avatar + Dashboard link when authenticated
- *   - Added Logout button in mobile menu
- *   - All original nav links and styling preserved unchanged
- */
-
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, HeartHandshake, Sparkles, User, LogOut } from "lucide-react";
+import { Menu, X, HeartHandshake, Sparkles, User, LogOut, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 
@@ -31,14 +18,21 @@ const nav = [
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, profile, isAuthenticated, primaryRole, logout } = useAuth();
   const navigate = useNavigate();
 
-  function handleLogout() {
-    logout();
+  const dashboardTo =
+    primaryRole === "admin" ? "/admin" : primaryRole === "doctor" ? "/doctor" : "/patient";
+
+  async function handleLogout() {
+    await logout();
     navigate({ to: "/" });
     setOpen(false);
   }
+
+  const displayName =
+    profile?.full_name?.split(" ")[0] ?? user?.email?.split("@")[0] ?? "Account";
+  const initials = (profile?.full_name ?? user?.email ?? "?").slice(0, 2).toUpperCase();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-lg">
@@ -57,17 +51,14 @@ export function Navbar() {
 
         <nav className="hidden items-center gap-1 lg:flex">
           {nav.map((item) => {
-            const active =
-              item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+            const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
             return (
               <Link
                 key={item.to}
                 to={item.to}
                 className={cn(
                   "rounded-full px-3 py-1.5 text-sm font-medium transition-colors",
-                  active
-                    ? "bg-primary-soft text-primary-strong"
-                    : "text-muted-foreground hover:text-foreground"
+                  active ? "bg-primary-soft text-primary-strong" : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <span className="inline-flex items-center gap-1.5">
@@ -79,7 +70,6 @@ export function Navbar() {
           })}
         </nav>
 
-        {/* Desktop right side */}
         <div className="hidden items-center gap-2 lg:flex">
           <Link
             to="/donate"
@@ -91,13 +81,18 @@ export function Navbar() {
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
               <Link
-                to="/dashboard"
+                to={dashboardTo}
                 className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-2 text-sm font-medium transition hover:bg-muted"
               >
-                <div className="flex h-6 w-6 items-center justify-center rounded-full gradient-brand text-[10px] font-bold text-primary-foreground">
-                  {user?.name.slice(0, 2).toUpperCase()}
-                </div>
-                {user?.name.split(" ")[0]}
+                <span className="flex h-6 w-6 items-center justify-center rounded-full gradient-brand text-[10px] font-bold text-primary-foreground">
+                  {initials}
+                </span>
+                {displayName}
+                {primaryRole && (
+                  <span className="rounded-full bg-primary-soft px-1.5 py-0.5 text-[10px] font-semibold uppercase text-primary-strong">
+                    {primaryRole}
+                  </span>
+                )}
               </Link>
               <button
                 onClick={handleLogout}
@@ -138,8 +133,7 @@ export function Navbar() {
         <div className="border-t border-border bg-background lg:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
             {nav.map((item) => {
-              const active =
-                item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+              const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
               return (
                 <Link
                   key={item.to}
@@ -147,9 +141,7 @@ export function Navbar() {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "rounded-xl px-3 py-3 text-sm font-medium",
-                    active
-                      ? "bg-primary-soft text-primary-strong"
-                      : "text-foreground hover:bg-muted"
+                    active ? "bg-primary-soft text-primary-strong" : "text-foreground hover:bg-muted",
                   )}
                 >
                   {item.label}
@@ -168,11 +160,11 @@ export function Navbar() {
             {isAuthenticated ? (
               <>
                 <Link
-                  to="/dashboard"
+                  to={dashboardTo}
                   onClick={() => setOpen(false)}
                   className="mt-1 flex items-center gap-2 rounded-xl border border-border px-3 py-3 text-sm font-medium"
                 >
-                  <User className="h-4 w-4" /> My Dashboard
+                  <LayoutDashboard className="h-4 w-4" /> My Dashboard
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -183,18 +175,10 @@ export function Navbar() {
               </>
             ) : (
               <div className="mt-1 flex gap-2">
-                <Link
-                  to="/login"
-                  onClick={() => setOpen(false)}
-                  className="flex-1 rounded-xl border border-border px-3 py-3 text-center text-sm font-medium"
-                >
+                <Link to="/login" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-border px-3 py-3 text-center text-sm font-medium">
                   Sign in
                 </Link>
-                <Link
-                  to="/register"
-                  onClick={() => setOpen(false)}
-                  className="flex-1 rounded-xl gradient-brand px-3 py-3 text-center text-sm font-semibold text-primary-foreground"
-                >
+                <Link to="/register" onClick={() => setOpen(false)} className="flex-1 rounded-xl gradient-brand px-3 py-3 text-center text-sm font-semibold text-primary-foreground">
                   Register
                 </Link>
               </div>
