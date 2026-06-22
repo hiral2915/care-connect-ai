@@ -9,16 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PhysioRouteImport } from './routes/physio'
 import { Route as NgoRouteImport } from './routes/ngo'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as DentalRouteImport } from './routes/dental'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BookAppointmentRouteImport } from './routes/book-appointment'
 import { Route as AiPrioritizationRouteImport } from './routes/ai-prioritization'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PhysioRoute = PhysioRouteImport.update({
   id: '/physio',
   path: '/physio',
@@ -27,6 +36,11 @@ const PhysioRoute = PhysioRouteImport.update({
 const NgoRoute = NgoRouteImport.update({
   id: '/ngo',
   path: '/ngo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonateRoute = DonateRouteImport.update({
@@ -44,9 +58,19 @@ const DentalRoute = DentalRouteImport.update({
   path: '/dental',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookAppointmentRoute = BookAppointmentRouteImport.update({
+  id: '/book-appointment',
+  path: '/book-appointment',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AiPrioritizationRoute = AiPrioritizationRouteImport.update({
@@ -69,35 +93,47 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/ai-prioritization': typeof AiPrioritizationRoute
+  '/book-appointment': typeof BookAppointmentRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/dental': typeof DentalRoute
   '/doctors': typeof DoctorsRoute
   '/donate': typeof DonateRoute
+  '/login': typeof LoginRoute
   '/ngo': typeof NgoRoute
   '/physio': typeof PhysioRoute
+  '/register': typeof RegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/ai-prioritization': typeof AiPrioritizationRoute
+  '/book-appointment': typeof BookAppointmentRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/dental': typeof DentalRoute
   '/doctors': typeof DoctorsRoute
   '/donate': typeof DonateRoute
+  '/login': typeof LoginRoute
   '/ngo': typeof NgoRoute
   '/physio': typeof PhysioRoute
+  '/register': typeof RegisterRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/ai-prioritization': typeof AiPrioritizationRoute
+  '/book-appointment': typeof BookAppointmentRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRoute
   '/dental': typeof DentalRoute
   '/doctors': typeof DoctorsRoute
   '/donate': typeof DonateRoute
+  '/login': typeof LoginRoute
   '/ngo': typeof NgoRoute
   '/physio': typeof PhysioRoute
+  '/register': typeof RegisterRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,50 +141,73 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/ai-prioritization'
+    | '/book-appointment'
     | '/contact'
+    | '/dashboard'
     | '/dental'
     | '/doctors'
     | '/donate'
+    | '/login'
     | '/ngo'
     | '/physio'
+    | '/register'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/ai-prioritization'
+    | '/book-appointment'
     | '/contact'
+    | '/dashboard'
     | '/dental'
     | '/doctors'
     | '/donate'
+    | '/login'
     | '/ngo'
     | '/physio'
+    | '/register'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/ai-prioritization'
+    | '/book-appointment'
     | '/contact'
+    | '/dashboard'
     | '/dental'
     | '/doctors'
     | '/donate'
+    | '/login'
     | '/ngo'
     | '/physio'
+    | '/register'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AiPrioritizationRoute: typeof AiPrioritizationRoute
+  BookAppointmentRoute: typeof BookAppointmentRoute
   ContactRoute: typeof ContactRoute
+  DashboardRoute: typeof DashboardRoute
   DentalRoute: typeof DentalRoute
   DoctorsRoute: typeof DoctorsRoute
   DonateRoute: typeof DonateRoute
+  LoginRoute: typeof LoginRoute
   NgoRoute: typeof NgoRoute
   PhysioRoute: typeof PhysioRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/physio': {
       id: '/physio'
       path: '/physio'
@@ -161,6 +220,13 @@ declare module '@tanstack/react-router' {
       path: '/ngo'
       fullPath: '/ngo'
       preLoaderRoute: typeof NgoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donate': {
@@ -184,11 +250,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DentalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book-appointment': {
+      id: '/book-appointment'
+      path: '/book-appointment'
+      fullPath: '/book-appointment'
+      preLoaderRoute: typeof BookAppointmentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai-prioritization': {
@@ -219,13 +299,27 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AiPrioritizationRoute: AiPrioritizationRoute,
+  BookAppointmentRoute: BookAppointmentRoute,
   ContactRoute: ContactRoute,
+  DashboardRoute: DashboardRoute,
   DentalRoute: DentalRoute,
   DoctorsRoute: DoctorsRoute,
   DonateRoute: DonateRoute,
+  LoginRoute: LoginRoute,
   NgoRoute: NgoRoute,
   PhysioRoute: PhysioRoute,
+  RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

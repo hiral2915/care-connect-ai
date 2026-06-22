@@ -1,3 +1,14 @@
+/**
+ * CareConnect AI — Root Route (Auth-aware)
+ *
+ * This REPLACES src/routes/__root.tsx
+ *
+ * WHAT CHANGED vs original:
+ *   - Added import of AuthProvider
+ *   - Wrapped <Outlet /> in <AuthProvider>
+ *   - Everything else (RootShell, NotFoundComponent, ErrorComponent) is unchanged
+ */
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -11,6 +22,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AuthProvider } from "@/context/AuthContext";
 
 function NotFoundComponent() {
   return (
@@ -126,8 +138,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <AuthProvider>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
