@@ -11,15 +11,18 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PhysioRouteImport } from './routes/physio'
+import { Route as PatientRouteImport } from './routes/patient'
 import { Route as NgoRouteImport } from './routes/ngo'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as DoctorsRouteImport } from './routes/doctors'
+import { Route as DoctorRouteImport } from './routes/doctor'
 import { Route as DentalRouteImport } from './routes/dental'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BookAppointmentRouteImport } from './routes/book-appointment'
 import { Route as AiPrioritizationRouteImport } from './routes/ai-prioritization'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -31,6 +34,11 @@ const RegisterRoute = RegisterRouteImport.update({
 const PhysioRoute = PhysioRouteImport.update({
   id: '/physio',
   path: '/physio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientRoute = PatientRouteImport.update({
+  id: '/patient',
+  path: '/patient',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NgoRoute = NgoRouteImport.update({
@@ -51,6 +59,11 @@ const DonateRoute = DonateRouteImport.update({
 const DoctorsRoute = DoctorsRouteImport.update({
   id: '/doctors',
   path: '/doctors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoctorRoute = DoctorRouteImport.update({
+  id: '/doctor',
+  path: '/doctor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DentalRoute = DentalRouteImport.update({
@@ -78,6 +91,11 @@ const AiPrioritizationRoute = AiPrioritizationRouteImport.update({
   path: '/ai-prioritization',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -92,30 +110,36 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/ai-prioritization': typeof AiPrioritizationRoute
   '/book-appointment': typeof BookAppointmentRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/dental': typeof DentalRoute
+  '/doctor': typeof DoctorRoute
   '/doctors': typeof DoctorsRoute
   '/donate': typeof DonateRoute
   '/login': typeof LoginRoute
   '/ngo': typeof NgoRoute
+  '/patient': typeof PatientRoute
   '/physio': typeof PhysioRoute
   '/register': typeof RegisterRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/ai-prioritization': typeof AiPrioritizationRoute
   '/book-appointment': typeof BookAppointmentRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/dental': typeof DentalRoute
+  '/doctor': typeof DoctorRoute
   '/doctors': typeof DoctorsRoute
   '/donate': typeof DonateRoute
   '/login': typeof LoginRoute
   '/ngo': typeof NgoRoute
+  '/patient': typeof PatientRoute
   '/physio': typeof PhysioRoute
   '/register': typeof RegisterRoute
 }
@@ -123,15 +147,18 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/ai-prioritization': typeof AiPrioritizationRoute
   '/book-appointment': typeof BookAppointmentRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/dental': typeof DentalRoute
+  '/doctor': typeof DoctorRoute
   '/doctors': typeof DoctorsRoute
   '/donate': typeof DonateRoute
   '/login': typeof LoginRoute
   '/ngo': typeof NgoRoute
+  '/patient': typeof PatientRoute
   '/physio': typeof PhysioRoute
   '/register': typeof RegisterRoute
 }
@@ -140,45 +167,54 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/ai-prioritization'
     | '/book-appointment'
     | '/contact'
     | '/dashboard'
     | '/dental'
+    | '/doctor'
     | '/doctors'
     | '/donate'
     | '/login'
     | '/ngo'
+    | '/patient'
     | '/physio'
     | '/register'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/admin'
     | '/ai-prioritization'
     | '/book-appointment'
     | '/contact'
     | '/dashboard'
     | '/dental'
+    | '/doctor'
     | '/doctors'
     | '/donate'
     | '/login'
     | '/ngo'
+    | '/patient'
     | '/physio'
     | '/register'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/ai-prioritization'
     | '/book-appointment'
     | '/contact'
     | '/dashboard'
     | '/dental'
+    | '/doctor'
     | '/doctors'
     | '/donate'
     | '/login'
     | '/ngo'
+    | '/patient'
     | '/physio'
     | '/register'
   fileRoutesById: FileRoutesById
@@ -186,15 +222,18 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
   AiPrioritizationRoute: typeof AiPrioritizationRoute
   BookAppointmentRoute: typeof BookAppointmentRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   DentalRoute: typeof DentalRoute
+  DoctorRoute: typeof DoctorRoute
   DoctorsRoute: typeof DoctorsRoute
   DonateRoute: typeof DonateRoute
   LoginRoute: typeof LoginRoute
   NgoRoute: typeof NgoRoute
+  PatientRoute: typeof PatientRoute
   PhysioRoute: typeof PhysioRoute
   RegisterRoute: typeof RegisterRoute
 }
@@ -213,6 +252,13 @@ declare module '@tanstack/react-router' {
       path: '/physio'
       fullPath: '/physio'
       preLoaderRoute: typeof PhysioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patient': {
+      id: '/patient'
+      path: '/patient'
+      fullPath: '/patient'
+      preLoaderRoute: typeof PatientRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ngo': {
@@ -241,6 +287,13 @@ declare module '@tanstack/react-router' {
       path: '/doctors'
       fullPath: '/doctors'
       preLoaderRoute: typeof DoctorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/doctor': {
+      id: '/doctor'
+      path: '/doctor'
+      fullPath: '/doctor'
+      preLoaderRoute: typeof DoctorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dental': {
@@ -278,6 +331,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AiPrioritizationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -298,28 +358,21 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
   AiPrioritizationRoute: AiPrioritizationRoute,
   BookAppointmentRoute: BookAppointmentRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   DentalRoute: DentalRoute,
+  DoctorRoute: DoctorRoute,
   DoctorsRoute: DoctorsRoute,
   DonateRoute: DonateRoute,
   LoginRoute: LoginRoute,
   NgoRoute: NgoRoute,
+  PatientRoute: PatientRoute,
   PhysioRoute: PhysioRoute,
   RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
