@@ -41,7 +41,7 @@ function DentalPage() {
               From routine cleanings to full-mouth rehabilitation — you're in expert hands.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/contact" className="rounded-full gradient-brand px-5 py-3 text-sm font-semibold text-primary-foreground shadow-elegant">
+              <Link to="/book-appointment" className="rounded-full gradient-brand px-5 py-3 text-sm font-semibold text-primary-foreground shadow-elegant">
                 Book a dental visit
               </Link>
               <Link to="/doctors" className="rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold">
@@ -72,7 +72,7 @@ function DentalPage() {
               <p className="mt-2 text-sm text-muted-foreground">{t.body}</p>
               <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
                 <span className="text-xs font-semibold uppercase tracking-wider text-primary-strong">{t.price}</span>
-                <Link to="/contact" className="inline-flex items-center gap-1 text-sm font-semibold text-foreground">
+                <Link to="/book-appointment" className="inline-flex items-center gap-1 text-sm font-semibold text-foreground">
                   Book <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>

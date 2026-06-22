@@ -56,7 +56,7 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
-              to="/contact"
+              to="/book-appointment"
               className="inline-flex items-center gap-2 rounded-full gradient-brand px-5 py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:translate-y-[-1px]"
             >
               Book an appointment <ArrowRight className="h-4 w-4" />
